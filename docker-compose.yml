@@ -1,0 +1,18 @@
+# Adapted from
+# https://docs.k3s.io/advanced#running-k3s-in-docker
+# https://github.com/k3s-io/k3s/blob/main/docker-compose.yml
+
+services:
+  k3s:
+    privileged: true
+    container_name: demo-cluster
+    hostname: demo-cluster
+    ports:
+      - 6443:6443 # Kubernetes API server
+      - 80:80     # Ingress controller port 80
+      - 443:443   # Ingress controller port 443
+    tmpfs:
+      - /run
+      - /var/run
+    image: rancher/k3s:v1.35.2-k3s1
+    command: server
