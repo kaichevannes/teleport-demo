@@ -1,8 +1,7 @@
-# Adapted from
-# https://docs.k3s.io/advanced#running-k3s-in-docker
-# https://github.com/k3s-io/k3s/blob/main/docker-compose.yml
-
 services:
+  # Adapted from
+  # https://docs.k3s.io/advanced#running-k3s-in-docker
+  # https://github.com/k3s-io/k3s/blob/main/docker-compose.yml
   cluster:
     privileged: true
     container_name: demo-cluster
@@ -18,7 +17,10 @@ services:
     command: server
 
   user:
-    image: bitnami/kubectl:latest
+    image: bitnami/kubectl@sha256:f6dd048d1c14d89ede9636cd6bee0ff0238579c33ea1e51b2fb1a1cfd62ea246
     container_name: demo-user
     network_mode: "service:cluster"
     entrypoint: ["sleep", "infinity"]
+    # Run a small process on PID 1 so signals are sent properly. This means
+    # after `compose down` Docker doesn't take 10 seconds to send SIGKILL.
+    init: true 
