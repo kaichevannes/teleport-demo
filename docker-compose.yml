@@ -7,14 +7,21 @@ services:
     container_name: demo-cluster
     hostname: demo-cluster
     ports:
-      - 6443:6443 # Kubernetes API server
       - 80:80     # Ingress controller port 80
       - 443:443   # Ingress controller port 443
     tmpfs:
+      # k3s expects these directories to be tmpfs (in memory)
       - /run
       - /var/run
     image: rancher/k3s:v1.35.2-k3s1
     command: server
+    volumes:
+      # k3s recursively watches /var/lib/rancher/k3s/server/manifests and
+      # automatically applies all manifest files.
+      # 
+      # Bind to /custom to avoid copying built-in k3s manifests back to the
+      # local manifest folder.
+      - ./manifests:/var/lib/rancher/k3s/server/manifests/custom
 
   user:
     image: bitnami/kubectl@sha256:f6dd048d1c14d89ede9636cd6bee0ff0238579c33ea1e51b2fb1a1cfd62ea246
