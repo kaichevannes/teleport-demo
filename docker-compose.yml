@@ -3,7 +3,7 @@
 # https://github.com/k3s-io/k3s/blob/main/docker-compose.yml
 
 services:
-  k3s:
+  cluster:
     privileged: true
     container_name: demo-cluster
     hostname: demo-cluster
@@ -16,3 +16,9 @@ services:
       - /var/run
     image: rancher/k3s:v1.35.2-k3s1
     command: server
+
+  user:
+    image: bitnami/kubectl:latest
+    container_name: demo-user
+    network_mode: "service:cluster"
+    entrypoint: ["sleep", "infinity"]
