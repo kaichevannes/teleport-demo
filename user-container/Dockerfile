@@ -12,7 +12,7 @@ COPY --from=builder /go/bin/oidc-cli /usr/local/bin/oidc-cli
 COPY ./oidc-server-mock-config/certs/public-certificate.pem /usr/local/share/ca-certificates/idp.crt
 RUN update-ca-certificates
 
-COPY ./decode-jwt.sh /decode-jwt.sh
+COPY ./user-container/decode-jwt.sh /decode-jwt.sh
 RUN chmod +x /decode-jwt.sh
 
 ENTRYPOINT ["tini", "--"]
