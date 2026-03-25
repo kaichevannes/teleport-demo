@@ -50,7 +50,7 @@ services:
   user:
     build:
       context: .
-      dockerfile: ./user.Dockerfile
+      dockerfile: ./user-container/Dockerfile
     container_name: demo-user
     network_mode: host
     volumes:
