@@ -13,10 +13,10 @@ services:
       USERS_CONFIGURATION_PATH: /tmp/config/users.yaml
       CLIENTS_CONFIGURATION_PATH: /tmp/config/clients.yaml
     volumes:
-      - ./oidc-server-mock-config/certs/private-certificate.pfx:/tmp/config/private-certificate.pfx
-      - ./oidc-server-mock-config/server.yaml:/tmp/config/server.yaml
-      - ./oidc-server-mock-config/users.yaml:/tmp/config/users.yaml
-      - ./oidc-server-mock-config/clients.yaml:/tmp/config/clients.yaml
+      - ./idp/certs/private-certificate.pfx:/tmp/config/private-certificate.pfx
+      - ./idp/server.yaml:/tmp/config/server.yaml
+      - ./idp/users.yaml:/tmp/config/users.yaml
+      - ./idp/clients.yaml:/tmp/config/clients.yaml
 
   # Adapted from
   # https://docs.k3s.io/advanced#running-k3s-in-docker
@@ -39,19 +39,19 @@ services:
       - /run
       - /var/run
     volumes:
-      - ./oidc-server-mock-config/certs/public-certificate.pem:/tmp/config/public-certificate.pem
+      - ./idp/certs/public-certificate.pem:/tmp/config/public-certificate.pem
       # k3s recursively watches /var/lib/rancher/k3s/server/manifests and
       # automatically applies all manifest files.
       # 
       # Bind to /custom to avoid copying built-in k3s manifests back to the
       # local manifest folder.
-      - ./manifests:/var/lib/rancher/k3s/server/manifests/custom
+      - ./cluster/manifests:/var/lib/rancher/k3s/server/manifests/custom
 
   user:
     build:
-      # Context at root because we copy the cert from ./oidc-server-mock-config
+      # Context at root because we copy the cert from ./idp
       context: .
-      dockerfile: ./user-container/Dockerfile
+      dockerfile: ./user/Dockerfile
     container_name: demo-user
     network_mode: host
     volumes:
