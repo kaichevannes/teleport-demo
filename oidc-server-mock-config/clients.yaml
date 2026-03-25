@@ -1,0 +1,12 @@
+- ClientId: authorization-code-mock-client
+  Description: Client for authorization code flow
+  AllowedGrantTypes:
+    - authorization_code
+  RequireClientSecret: false
+  AllowedScopes:
+    - openid
+    - profile
+    - email
+  RedirectUris:
+    - http://localhost:8000
+    - http://localhost:18000

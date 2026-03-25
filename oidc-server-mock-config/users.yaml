@@ -1,0 +1,17 @@
+- SubjectId: 1
+  Username: alice
+  Password: alice1234
+  Claims:
+    - Type: name
+      Value: Alice
+    - Type: email
+      Value: alice@example.com
+
+- SubjectId: 2
+  Username: bob
+  Password: bob1234
+  Claims:
+    - Type: name
+      Value: Bob
+    - Type: email
+      Value: bob@example.com
