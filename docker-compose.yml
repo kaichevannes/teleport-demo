@@ -49,6 +49,7 @@ services:
 
   user:
     build:
+      # Context at root because we copy the cert from ./oidc-server-mock-config
       context: .
       dockerfile: ./user-container/Dockerfile
     container_name: demo-user
