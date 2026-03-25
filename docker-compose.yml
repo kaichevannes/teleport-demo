@@ -26,6 +26,7 @@ services:
   user:
     build: ./user-container
     container_name: demo-user
+    network_mode: host
     entrypoint: ["sleep", "infinity"]
     # Run a small process on PID 1 so signals are sent properly. This means
     # after `compose down` Docker doesn't take 10 seconds to send SIGKILL.
