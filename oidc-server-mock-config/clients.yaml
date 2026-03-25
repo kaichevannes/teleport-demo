@@ -2,10 +2,15 @@
   Description: Client for authorization code flow
   AllowedGrantTypes:
     - authorization_code
+  AllowOfflineAccess: true
   RequireClientSecret: false
+  AlwaysIncludeUserClaimsInIdToken: true
   AllowedScopes:
     - openid
     - profile
     - email
+    - offline_access
   RedirectUris:
     - http://localhost:9555
+  IdentityTokenLifetime: 3600
+  AccessTokenLifetime: 3600

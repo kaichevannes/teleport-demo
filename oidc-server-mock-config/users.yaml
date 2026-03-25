@@ -3,7 +3,7 @@
   Password: alice1234
   Claims:
     - Type: name
-      Value: Alice
+      Value: alice
     - Type: email
       Value: alice@example.com
 
@@ -12,6 +12,6 @@
   Password: bob1234
   Claims:
     - Type: name
-      Value: Bob
+      Value: bob
     - Type: email
       Value: bob@example.com
