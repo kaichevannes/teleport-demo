@@ -1,21 +1,47 @@
 services:
+  idp:
+    build: ./dockerfiles/idp
+    container_name: demo-idp
+    ports:
+      - 8080:80
+      - 8443:443
+    environment:
+      SERVER_OPTIONS_PATH: /tmp/config/server.yaml
+      USERS_CONFIGURATION_PATH: /tmp/config/users.yaml
+      CLIENTS_CONFIGURATION_PATH: /tmp/config/clients.yaml
+    volumes:
+      - idp-https-cert:/idp-https-cert
+      - ./oidc-server-mock-config/server.yaml:/tmp/config/server.yaml
+      - ./oidc-server-mock-config/users.yaml:/tmp/config/users.yaml
+      - ./oidc-server-mock-config/clients.yaml:/tmp/config/clients.yaml
+
   # Adapted from
   # https://docs.k3s.io/advanced#running-k3s-in-docker
   # https://github.com/k3s-io/k3s/blob/main/docker-compose.yml
   cluster:
-    privileged: true
+    image: rancher/k3s:v1.35.2-k3s1
+    depends_on:
+      idp:
+        condition: service_healthy
     container_name: demo-cluster
     hostname: demo-cluster
+    command: >
+      server
+      --kube-apiserver-arg=oidc-issuer-url=https://idp:8080
+      --kube-apiserver-arg=oidc-client-id=authorization-code-mock-client
+      --kube-apiserver-arg=oidc-username-claim=sub
+      --kube-apiserver-arg=oidc-ca-file=/idp-https-cert/public-certificate.pem
+    privileged: true
     ports:
+      - 6443:6443 # Kubernetes API Server
       - 80:80     # Ingress controller port 80
       - 443:443   # Ingress controller port 443
     tmpfs:
       # k3s expects these directories to be tmpfs (in memory)
       - /run
       - /var/run
-    image: rancher/k3s:v1.35.2-k3s1
-    command: server
     volumes:
+      - idp-https-cert:/idp-https-cert:ro
       # k3s recursively watches /var/lib/rancher/k3s/server/manifests and
       # automatically applies all manifest files.
       # 
@@ -24,24 +50,15 @@ services:
       - ./manifests:/var/lib/rancher/k3s/server/manifests/custom
 
   user:
-    build: ./user-container
+    build: ./dockerfiles/user
+    depends_on:
+      idp:
+        condition: service_healthy
     container_name: demo-user
     network_mode: host
-    entrypoint: ["sleep", "infinity"]
-    # Run a small process on PID 1 so signals are sent properly. This means
-    # after `compose down` Docker doesn't take 10 seconds to send SIGKILL.
-    init: true 
-
-  idp:
-    container_name: demo-idp
-    image: ghcr.io/soluto/oidc-server-mock:0.12.1
-    ports:
-      - 8080:8080
-    environment:
-      SERVER_OPTIONS_PATH: /tmp/config/server.yaml
-      USERS_CONFIGURATION_PATH: /tmp/config/users.yaml
-      CLIENTS_CONFIGURATION_PATH: /tmp/config/clients.yaml
     volumes:
-      - ./oidc-server-mock-config/server.yaml:/tmp/config/server.yaml
-      - ./oidc-server-mock-config/users.yaml:/tmp/config/users.yaml
-      - ./oidc-server-mock-config/clients.yaml:/tmp/config/clients.yaml
+      - ./kubeconfig.yaml:/root/.kube/config
+      - idp-https-cert:/idp-https-cert:ro
+
+volumes:
+  idp-https-cert:
