@@ -9,12 +9,10 @@ services:
       ASPNETCORE_URLS: https://+:443;http://+:80
       ASPNETCORE_Kestrel__Certificates__Default__Password: pfx-password
       ASPNETCORE_Kestrel__Certificates__Default__Path: /tmp/config/private-certificate.pfx
-      SERVER_OPTIONS_PATH: /tmp/config/server.yaml
       USERS_CONFIGURATION_PATH: /tmp/config/users.yaml
       CLIENTS_CONFIGURATION_PATH: /tmp/config/clients.yaml
     volumes:
       - ./idp/certs/private-certificate.pfx:/tmp/config/private-certificate.pfx
-      - ./idp/server.yaml:/tmp/config/server.yaml
       - ./idp/users.yaml:/tmp/config/users.yaml
       - ./idp/clients.yaml:/tmp/config/clients.yaml
 
