@@ -24,20 +24,14 @@ services:
     container_name: demo-cluster
     hostname: demo-cluster
     network_mode: host
-    command: >
-      server
-      --kube-apiserver-arg=oidc-issuer-url=https://localhost:8443
-      --kube-apiserver-arg=oidc-client-id=authorization-code-mock-client
-      --kube-apiserver-arg=oidc-username-claim=name
-      --kube-apiserver-arg=oidc-username-prefix=-
-      --kube-apiserver-arg=oidc-ca-file=/tmp/config/public-certificate.pem
+    command: server --kube-apiserver-arg=authentication-config=/tmp/config/authentication-config.yaml
     privileged: true
     tmpfs:
       # k3s expects these directories to be tmpfs (in memory)
       - /run
       - /var/run
     volumes:
-      - ./idp/certs/public-certificate.pem:/tmp/config/public-certificate.pem
+      - ./cluster/authentication-configuration.yaml:/tmp/config/authentication-config.yaml
       # k3s recursively watches /var/lib/rancher/k3s/server/manifests and
       # automatically applies all manifest files.
       # 
