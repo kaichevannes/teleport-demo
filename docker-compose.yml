@@ -43,6 +43,8 @@ services:
       - /var/run
     volumes:
       - ./cluster/authentication-configuration.yaml:/tmp/config/authentication-config.yaml
+      - ./cluster/certs/server-ca.crt:/var/lib/rancher/k3s/server/tls/server-ca.crt
+      - ./cluster/certs/server-ca.key:/var/lib/rancher/k3s/server/tls/server-ca.key
       # k3s recursively watches /var/lib/rancher/k3s/server/manifests and
       # automatically applies all manifest files.
       # 
