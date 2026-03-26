@@ -47,7 +47,7 @@ services:
     container_name: demo-user
     network_mode: host
     volumes:
-      - ./user/kubeconfig.yaml:/root/.kube/config
+      - ./kubeconfig.yaml:/root/.kube/config
 
   kubelogin:
     build:

@@ -3,15 +3,18 @@ kind: AuthenticationConfiguration
 jwt:
   - claimMappings:
       username:
-        claim: email
-        prefix: "oidc:"
-      groups:
-        claim: groups
-        prefix: "oidc:"
+        claim: name
+        prefix: ""
+      # username:
+      #   claim: email
+      #   prefix: "oidc:"
+      # groups:
+      #   claim: groups
+      #   prefix: "oidc:"
     issuer:
       url: https://localhost:8443
       audiences:
-        - authorization-code-mock-client
+        - mock-client
       certificateAuthority: |
         -----BEGIN CERTIFICATE-----
         MIIDGjCCAgKgAwIBAgIUXgM4UcedQK2hC/CIXyAvJVNUsJYwDQYJKoZIhvcNAQEL
