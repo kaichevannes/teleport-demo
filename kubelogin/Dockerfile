@@ -6,5 +6,8 @@ RUN echo "@testing https://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/a
 COPY ./idp/certs/public-certificate.pem /usr/local/share/ca-certificates/idp.crt
 RUN update-ca-certificates
 
+COPY ./user/open-host-browser.sh /usr/local/bin/xdg-open
+RUN chmod +x /usr/local/bin/xdg-open
+
 ENTRYPOINT ["tini", "--"]
 CMD ["sleep", "infinity"]

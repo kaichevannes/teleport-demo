@@ -15,5 +15,8 @@ RUN update-ca-certificates
 COPY ./user/decode-jwt.sh /decode-jwt.sh
 RUN chmod +x /decode-jwt.sh
 
+COPY ./user/open-host-browser.sh /usr/local/bin/xdg-open
+RUN chmod +x /usr/local/bin/xdg-open
+
 ENTRYPOINT ["tini", "--"]
 CMD ["sleep", "infinity"]
