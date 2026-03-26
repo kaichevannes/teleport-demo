@@ -6,6 +6,12 @@
       Value: alice
     - Type: email
       Value: alice@example.com
+    - Type: groups
+      Value: monitor
+    - Type: groups
+      Value: access
+    - Type: groups
+      Value: deploy
 
 - SubjectId: 2
   Username: bob
@@ -15,3 +21,14 @@
       Value: bob
     - Type: email
       Value: bob@example.com
+    - Type: groups
+      Value: monitor
+
+- SubjectId: 3
+  Username: charlie
+  Password: charlie1234
+  Claims:
+    - Type: name
+      Value: charlie
+    - Type: email
+      Value: charlie@example.com
