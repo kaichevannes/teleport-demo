@@ -1,10 +1,11 @@
-- ClientId: authorization-code-mock-client
-  Description: Client for authorization code flow
+- ClientId: mock-client
+  Description: Client for mock idp
   AllowedGrantTypes:
     - authorization_code
   AllowOfflineAccess: true
   RequireClientSecret: false
   AlwaysIncludeUserClaimsInIdToken: true
+  RefreshTokenUsage: OneTimeOnly
   AllowedScopes:
     - openid
     - profile

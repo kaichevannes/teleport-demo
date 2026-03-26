@@ -5,7 +5,7 @@ RUN go install github.com/jentz/oidc-cli@latest
 
 FROM alpine:3.23.3
 
-RUN apk add --no-cache tini kubectl ca-certificates jq coreutils 
+RUN apk add --no-cache tini coreutils curl jq kubectl ca-certificates 
 
 COPY --from=builder /go/bin/oidc-cli /usr/local/bin/oidc-cli
 

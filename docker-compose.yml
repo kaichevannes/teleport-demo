@@ -47,4 +47,17 @@ services:
     container_name: demo-user
     network_mode: host
     volumes:
-      - ./kubeconfig.yaml:/root/.kube/config
+      - ./user/kubeconfig.yaml:/root/.kube/config
+
+  kubelogin:
+    build:
+      # Context at root because we copy the cert from ./idp
+      context: .
+      dockerfile: ./kubelogin/Dockerfile
+    container_name: demo-kubelogin
+    network_mode: host
+    environment:
+      KUBECONFIG: /tmp/config/oidckubeconfig.yaml:/tmp/config/kubeconfig.yaml
+    volumes:
+      - ./kubeconfig.yaml:/tmp/config/kubeconfig.yaml
+      - ./kubelogin/oidckubeconfig.yaml:/tmp/config/oidckubeconfig.yaml

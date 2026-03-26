@@ -3,8 +3,11 @@ kind: AuthenticationConfiguration
 jwt:
   - claimMappings:
       username:
-        claim: name
-        prefix: ""
+        claim: email
+        prefix: "oidc:"
+      groups:
+        claim: groups
+        prefix: "oidc:"
     issuer:
       url: https://localhost:8443
       audiences:
