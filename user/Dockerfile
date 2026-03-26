@@ -1,7 +1,7 @@
-FROM golang:1.24-alpine AS builder
+FROM golang:1.26-alpine AS builder
 
 RUN apk add --no-cache git=2.52.0-r0 && \
-    go install github.com/jentz/oidc-cli@0.1.21
+    go install github.com/jentz/oidc-cli@v0.1.21
 
 FROM alpine:3.23.3
 
@@ -11,7 +11,8 @@ RUN apk add --no-cache \
         curl=8.17.0-r1 \
         jq=1.8.1-r0 \
         kubectl=1.34.2-r4 \
-        tini=0.19.0-r3
+        tini=0.19.0-r3 \
+        zlib=1.3.2-r0
 
 COPY ./idp/certs/public-certificate.pem /usr/local/share/ca-certificates/idp.crt
 RUN update-ca-certificates
