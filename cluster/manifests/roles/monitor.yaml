@@ -17,11 +17,11 @@ kind: RoleBinding
 metadata:
   name: monitor-rolebinding
   namespace: demo-namespace
-subjects:
-  - apiGroup: rbac.authorization.k8s.io
-    kind: Group
-    name: oidc:monitor
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
   name: monitor-role
+subjects:
+  - apiGroup: rbac.authorization.k8s.io
+    kind: Group
+    name: oidc:monitor

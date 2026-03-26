@@ -12,13 +12,15 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
+  annotations:
+    ignore-check.kube-linter.io/access-to-create-pods: "deploy role requires create access"
   name: deploy-rolebinding
   namespace: demo-namespace
-subjects:
-  - apiGroup: rbac.authorization.k8s.io
-    kind: Group
-    name: oidc:deploy
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
   name: deploy-role
+subjects:
+  - apiGroup: rbac.authorization.k8s.io
+    kind: Group
+    name: oidc:deploy
