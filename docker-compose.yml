@@ -1,10 +1,35 @@
+name: teleport-demo
+
 services:
+  cluster:
+    image: rancher/k3s:v1.35.2-k3s1
+    container_name: demo-cluster
+    volumes:
+      - ./cluster/authentication-configuration.yaml:/tmp/config/authentication-config.yaml
+      - ./cluster/certs/server-ca.crt:/var/lib/rancher/k3s/server/tls/server-ca.crt
+      - ./cluster/certs/server-ca.key:/var/lib/rancher/k3s/server/tls/server-ca.key
+      # k3s recursively watches /var/lib/rancher/k3s/server/manifests and
+      # automatically applies all manifest files.
+      #
+      # Bind to /custom to avoid copying built-in k3s manifests back to the
+      # local manifest folder.
+      - ./cluster/manifests:/var/lib/rancher/k3s/server/manifests/custom
+    network_mode: host
+    command: server --kube-apiserver-arg=authentication-config=/tmp/config/authentication-config.yaml
+    hostname: demo-cluster
+    privileged: true
+    tmpfs:
+      # k3s expects these directories to be tmpfs (in memory)
+      - /run
+      - /var/run
+
   idp:
     image: ghcr.io/soluto/oidc-server-mock:0.12.1
     container_name: demo-idp
-    ports:
-      - 8080:80
-      - 8443:443
+    volumes:
+      - ./idp/certs/private-certificate.pfx:/tmp/config/private-certificate.pfx
+      - ./idp/users.yaml:/tmp/config/users.yaml
+      - ./idp/clients.yaml:/tmp/config/clients.yaml
     environment:
       ASPNETCORE_URLS: https://+:443;http://+:80
       ASPNETCORE_Kestrel__Certificates__Default__Password: pfx-password
@@ -22,47 +47,9 @@ services:
         ]
       USERS_CONFIGURATION_PATH: /tmp/config/users.yaml
       CLIENTS_CONFIGURATION_PATH: /tmp/config/clients.yaml
-    volumes:
-      - ./idp/certs/private-certificate.pfx:/tmp/config/private-certificate.pfx
-      - ./idp/users.yaml:/tmp/config/users.yaml
-      - ./idp/clients.yaml:/tmp/config/clients.yaml
-
-  # Adapted from
-  # https://docs.k3s.io/advanced#running-k3s-in-docker
-  # https://github.com/k3s-io/k3s/blob/main/docker-compose.yml
-  cluster:
-    image: rancher/k3s:v1.35.2-k3s1
-    container_name: demo-cluster
-    hostname: demo-cluster
-    network_mode: host
-    command: server --kube-apiserver-arg=authentication-config=/tmp/config/authentication-config.yaml
-    privileged: true
-    tmpfs:
-      # k3s expects these directories to be tmpfs (in memory)
-      - /run
-      - /var/run
-    volumes:
-      - ./cluster/authentication-configuration.yaml:/tmp/config/authentication-config.yaml
-      - ./cluster/certs/server-ca.crt:/var/lib/rancher/k3s/server/tls/server-ca.crt
-      - ./cluster/certs/server-ca.key:/var/lib/rancher/k3s/server/tls/server-ca.key
-      # k3s recursively watches /var/lib/rancher/k3s/server/manifests and
-      # automatically applies all manifest files.
-      # 
-      # Bind to /custom to avoid copying built-in k3s manifests back to the
-      # local manifest folder.
-      - ./cluster/manifests:/var/lib/rancher/k3s/server/manifests/custom
-
-  user:
-    build:
-      # Context at root because we copy the cert from ./idp
-      context: .
-      dockerfile: ./user/Dockerfile
-    container_name: demo-user
-    network_mode: host
-    volumes:
-      - ./kubeconfig.yaml:/root/.kube/config
-      # Host browser
-      - ./hostbrowserpipe:/var/run/hostbrowserpipe
+    ports:
+      - '127.0.0.1:8080:80'
+      - '127.0.0.1:8443:443'
 
   kubelogin:
     build:
@@ -70,11 +57,23 @@ services:
       context: .
       dockerfile: ./kubelogin/Dockerfile
     container_name: demo-kubelogin
-    network_mode: host
-    environment:
-      KUBECONFIG: /tmp/config/oidckubeconfig.yaml:/tmp/config/kubeconfig.yaml
     volumes:
       - ./kubeconfig.yaml:/tmp/config/kubeconfig.yaml
       - ./kubelogin/oidckubeconfig.yaml:/tmp/config/oidckubeconfig.yaml
       # Host browser
       - ./hostbrowserpipe:/var/run/hostbrowserpipe
+    environment:
+      KUBECONFIG: /tmp/config/oidckubeconfig.yaml:/tmp/config/kubeconfig.yaml
+    network_mode: host
+
+  user:
+    build:
+      # Context at root because we copy the cert from ./idp
+      context: .
+      dockerfile: ./user/Dockerfile
+    container_name: demo-user
+    volumes:
+      - ./kubeconfig.yaml:/root/.kube/config
+      # Host browser
+      - ./hostbrowserpipe:/var/run/hostbrowserpipe
+    network_mode: host
