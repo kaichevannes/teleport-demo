@@ -31,25 +31,23 @@ cat response | jq -r '.id_token' | /decode-jwt.sh
 ```
 5. Get a new token using the refresh_token
 ```
-curl -X POST https://localhost:8443/connect/token -d "grant_type"="refresh_token" -d "refresh_token"="$(cat response | jq -r '.refresh_token')" -d "client_id"="mock-client" > alice-response
+curl -X POST https://localhost:8443/connect/token -d "grant_type"="refresh_token" -d "refresh_token"="$(cat response | jq -r '.refresh_token')" -d "client_id"="mock-client" > alice
 ```
 6. Run the command again to show one time use
 ```
 curl -X POST https://localhost:8443/connect/token -d "grant_type"="refresh_token" -d "refresh_token"="$(cat response | jq -r '.refresh_token')" -d "client_id"="mock-client"
 ```
-7. Get tokens for bob and charlie
+7. Get tokens for charlie
 ```
-oidc-cli authorization_code -issuer https://localhost:8443 -client-id mock-client -scopes "openid profile email groups offline_access" -prompt login -pkce > bob-response
-oidc-cli authorization_code -issuer https://localhost:8443 -client-id mock-client -scopes "openid profile email groups offline_access" -prompt login -pkce > charlie-response
+oidc-cli authorization_code -issuer https://localhost:8443 -client-id mock-client -scopes "openid profile email groups offline_access" -prompt login -pkce > charlie
 ```
 8. Get pods using alices token
 ```
 kubectl get pods --token "$(cat alice-response | jq -r '.id_token')"
 ```
-9. Show the same command works for bob but not for charlie
+9. Show the same command doesn't work for charlie
 ```
-kubectl get pods --token "$(cat bob-response | jq -r '.id_token')"
-kubectl get pods --token "$(cat charlie-response | jq -r '.id_token')"
+kubectl get pods --token "$(cat charlie | jq -r '.id_token')"
 ```
 10. Deploy the nginx application with alice
 ```
