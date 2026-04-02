@@ -71,11 +71,11 @@ kubectl get pods
 ```
 3. Expose the deployment
 ```
-kubectl expose deployment nginx --port=80 --token "$(cat response | jq -r '.id_token')"
+kubectl expose deployment nginx --port=80"
 ```
 4. Portforward the deployment
 ```
-kubectl port-forward svc/nginx 8081:80 --token "$(cat response | jq -r '.id_token')"
+kubectl port-forward svc/nginx 8081:80"
 ```
 5. Navigate to http://localhost:8081
 6. Try to delete the deployment as bob (insufficient permissions)
