@@ -5,7 +5,7 @@ metadata:
   namespace: demo-namespace
 rules:
   - apiGroups: [""]
-    resources: ["services", "pods/exec", "pods/portforward"]
+    resources: ["pods/exec", "pods/portforward"]
     verbs: ["create"]
 
 ---
