@@ -23,6 +23,8 @@
       Value: bob@example.com
     - Type: groups
       Value: monitor
+    - Type: groups
+      Value: access
 
 - SubjectId: 3
   Username: charlie
